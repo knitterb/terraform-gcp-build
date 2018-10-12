@@ -19,7 +19,7 @@ resource "google_cloudbuild_trigger" "build_trigger" {
     }
     step {
       name = "gcr.io/cloud-builders/docker"
-      args = "run gcr.io/$PROJECT_ID/$REPO_NAME:$SHORT_SHA apply -auto-approve -var project_id=$PROJECT_ID"
+      args = "run --network=host gcr.io/$PROJECT_ID/$REPO_NAME:$SHORT_SHA apply -auto-approve -var project_id=$PROJECT_ID"
     }
   }
 }
