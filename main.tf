@@ -10,7 +10,7 @@ resource "google_cloudbuild_trigger" "build_trigger" {
   }
   build {
     step {
-      name = "gsutil"
+      name = "gcr.io/cloud-builders/gsutil"
       args = "cp gs://$PROJECT_ID-$REPO_NAME/credentials.json ."
     }
     step {
@@ -19,11 +19,11 @@ resource "google_cloudbuild_trigger" "build_trigger" {
     }
     step {
       name = "gcr.io/cloud-builders/docker"
-      args = "run gcr.io/$PROJECT_ID/$REPO_NAME:$SHORT_SHA plan -var project_id=$PROJECT_ID"
+      args = "run gcr.io/$PROJECT_ID/$REPO_NAME:$SHORT_SHA plan -var project_id=${var.target_project_id}"
     }
     step {
       name = "gcr.io/cloud-builders/docker"
-      args = "run --network=host gcr.io/$PROJECT_ID/$REPO_NAME:$SHORT_SHA apply -auto-approve -var project_id=$PROJECT_ID"
+      args = "run --network=host gcr.io/$PROJECT_ID/$REPO_NAME:$SHORT_SHA apply -auto-approve -var project_id=${var.target_project_id}"
     }
   }
 }
