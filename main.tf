@@ -19,11 +19,11 @@ resource "google_cloudbuild_trigger" "build_trigger" {
     }
     step {
       name = "gcr.io/cloud-builders/docker"
-      args = "run --network=host gcr.io/$PROJECT_ID/$REPO_NAME:$SHORT_SHA plan -lock=true -lock-timeout=300s -var project_id=${var.target_project_id}"
+      args = "run --network=host gcr.io/$PROJECT_ID/$REPO_NAME:$SHORT_SHA plan -lock=true -lock-timeout=${var.lock_timeout}s -var project_id=${var.target_project_id}"
     }
     step {
       name = "gcr.io/cloud-builders/docker"
-      args = "run --network=host gcr.io/$PROJECT_ID/$REPO_NAME:$SHORT_SHA apply -lock=true -lock-timeout=300s -auto-approve -var project_id=${var.target_project_id}"
+      args = "run --network=host gcr.io/$PROJECT_ID/$REPO_NAME:$SHORT_SHA apply -lock=true -lock-timeout=${var.lock_timeout}s -auto-approve -var project_id=${var.target_project_id}"
     }
   }
 }
