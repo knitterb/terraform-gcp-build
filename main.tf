@@ -10,7 +10,7 @@ resource "google_cloudbuild_trigger" "build_trigger" {
   }
   build {
     step {
-      name = "gcloud"
+      name = "gsutil"
       args = "cp gs://$PROJECT_ID-$REPO_NAME/credentials.json ."
     }
     step {
