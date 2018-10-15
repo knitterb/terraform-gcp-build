@@ -15,7 +15,7 @@ resource "google_cloudbuild_trigger" "build_trigger" {
     }
     step {
       name = "gcr.io/cloud-builders/docker"
-      args = "build --build-arg BUCKET=$PROJECT_ID-$REPO_NAME-t gcr.io/$PROJECT_ID/$REPO_NAME:$SHORT_SHA -f Dockerfile ."
+      args = "build --build-arg BUCKET=$PROJECT_ID-$REPO_NAME -t gcr.io/$PROJECT_ID/$REPO_NAME:$SHORT_SHA -f Dockerfile ."
     }
     step {
       name = "gcr.io/cloud-builders/docker"
