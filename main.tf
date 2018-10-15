@@ -1,5 +1,22 @@
 provider "google" {
   project = "${var.project_id}"
+  credentials = "credentials.json"
+}
+
+resource "google_storage_bucket" "terraform-bucket" {
+  project  = "${var.project_id}"
+  name     = "${var.project_id}-terraform"
+  location = "us-west2"
+}
+resource "google_storage_bucket" "credential-bucket" {
+  project  = "${var.target_project_id}"
+  name     = "${var.target_project_id}-credentials"
+  location = "us-west2"
+}
+resource "google_storage_bucket_object" "credentials" {
+  name   = "credentials.json"
+  source = "./credentials.json"
+  bucket = "${google_storage_bucket.credential-bucket.name}"
 }
 
 resource "google_cloudbuild_trigger" "build_trigger" {
@@ -11,11 +28,11 @@ resource "google_cloudbuild_trigger" "build_trigger" {
   build {
     step {
       name = "gcr.io/cloud-builders/gsutil"
-      args = "cp gs://$PROJECT_ID-$REPO_NAME/credentials.json ."
+      args = "cp gs://${google_storage_bucket.credential-bucket.name}/credentials.json ."
     }
     step {
       name = "gcr.io/cloud-builders/docker"
-      args = "build --network=host --build-arg BUCKET=${var.target_project_id}-$REPO_NAME -t gcr.io/$PROJECT_ID/$REPO_NAME:$SHORT_SHA -f Dockerfile ."
+      args = "build --network=host --build-arg BUCKET=${google_storage_bucket.terraform-bucket.name} -t gcr.io/$PROJECT_ID/$REPO_NAME:$SHORT_SHA -f Dockerfile ."
     }
     step {
       name = "gcr.io/cloud-builders/docker"
