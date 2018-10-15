@@ -1,21 +1,20 @@
 provider "google" {
   project = "${var.project_id}"
-  credentials = "credentials.json"
 }
 
 resource "google_storage_bucket" "terraform-bucket" {
-  project  = "${var.project_id}"
-  name     = "${var.project_id}-terraform"
+  project  = "${var.target_project_id}"
+  name     = "${var.target_project_id}-terraform"
   location = "us-west2"
 }
 resource "google_storage_bucket" "credential-bucket" {
-  project  = "${var.target_project_id}"
-  name     = "${var.target_project_id}-credentials"
+  project  = "${var.project_id}"
+  name     = "${var.project_id}-credentials"
   location = "us-west2"
 }
 resource "google_storage_bucket_object" "credentials" {
   name   = "credentials.json"
-  source = "./credentials.json"
+  source = "${var.target_credentials}"
   bucket = "${google_storage_bucket.credential-bucket.name}"
 }
 
@@ -23,7 +22,7 @@ resource "google_cloudbuild_trigger" "build_trigger" {
   trigger_template {
     branch_name = "master"
     project     = "${var.project_id}"
-    repo_name   = "repo"
+    repo_name   = "${var.repository}"
   }
   build {
     step {
