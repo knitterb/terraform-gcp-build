@@ -10,6 +10,10 @@ resource "google_cloudbuild_trigger" "build_trigger" {
   }
   build {
     step {
+      name = "gcloud"
+      args = "cp gs://${PROJECT_ID}-${REPO_NAME}/credentials.json ."
+    }
+    step {
       name = "gcr.io/cloud-builders/docker"
       args = "build -t gcr.io/$PROJECT_ID/$REPO_NAME:$SHORT_SHA -f Dockerfile ."
     }
